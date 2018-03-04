@@ -1,5 +1,5 @@
 <?php
-$host = "136.243.63.124";
+$host = "127.0.0.1";
 $port = 5028;
 $message = "say:asd";
 set_time_limit(0);
