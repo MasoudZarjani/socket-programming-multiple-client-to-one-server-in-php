@@ -1,7 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UCS-4">
+    <title>Socket_Programing</title>
+</head>
+<body>
 <!--$key = number of clients
 $clients = clients connection list
-$socket_client = clients connection list with id in database
--->
+$socket_client = clients connection list with id in database-->
 <?php
 $address = '127.0.0.1';
 $port = 40403;
@@ -16,8 +22,7 @@ socket_bind($master_socket, $address, $port);
 // Start listening for connections
 socket_listen($master_socket);
 // master loop
-$aaa = 0;
-while ($aaa < 2) {
+while (true) {
     $aaa++;
     // Setup clients listen socket for reading
     $read = array();
@@ -31,8 +36,7 @@ while ($aaa < 2) {
     if ($ready == 0) {
         continue;
     }
-    /*echo "$ready events\n";
-    print_r($read);*/
+
     // if a new connection is being made add it to the client array
     if (in_array($master_socket, $read)) {
         if (count($clients) <= $max_clients) {
@@ -61,26 +65,22 @@ while ($aaa < 2) {
         if ($input == null) {
             $key = array_search($client, $clients);
             unset($clients[$key]);
+        } else {
+            //read hex data
+            $hex=unpack("H*",$input);
+            //print hex data
+            var_dump($hex[1]);
+            $str = hexToStr($hex[1]);
         }
         $n = trim($input);
         if ($input) {
-
-            socket_write($clients[$key], $ip);
+            socket_write($clients[$key], $str[0]);
         }
     }
 } // eo master loop
 // Close the master sockets
 socket_close($master_socket);
-function client_ip()
-{
-    // true client ip
-    if (!empty($_SERVER['HTTP_CLIENT_IP']))   //check ip from share internet
-    {
-        return $_SERVER['HTTP_CLIENT_IP'];
-    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))   //to check ip is pass from proxy
-    {
-        return $_SERVER['HTTP_X_FORWARDED_FOR'];
-    } else {
-        return $_SERVER['REMOTE_ADDR'];
-    }
-}
+
+?>
+</body>
+</html>
